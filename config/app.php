@@ -3,6 +3,7 @@
 return [
     'app_name' => 'MDir',
     'debug' => false,
-    'dir' => '/path/to/my/markdown/files',
-    'ext' => 'md',
+    'markdown_dir' => '/home/xwn/work',
+    'markdown_extensions' => ['md'],
+    'extra_extensions' => ['txt'],
 ];

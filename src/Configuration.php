@@ -21,8 +21,9 @@ class Configuration implements ConfigurationInterface
             ->children()
             ->booleanNode('debug')->defaultTrue()->end()
             ->scalarNode('app_name')->defaultValue('MDir')->end()
-            ->scalarNode('dir')->defaultValue(__DIR__ . '/../markdown')->end()
-            ->scalarNode('ext')->defaultValue('md')->end()
+            ->scalarNode('markdown_dir')->defaultValue(__DIR__ . '/../markdown')->end()
+            ->arrayNode('markdown_extensions')->defaultValue(['md'])->end()
+            ->arrayNode('extra_extensions')->defaultValue(['txt'])->end()
             ->end();
 
         return $treeBuilder;

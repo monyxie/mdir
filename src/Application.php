@@ -55,11 +55,11 @@ class Application
             ini_set('display_errors', 'off');
         }
 
-        if (!is_dir($this->config['dir'])) {
-            die('Change "dir" to point to your markdown directory in app.php.');
+        if (!is_dir($this->config['markdown_dir'])) {
+            die('Change "markdown_dir" to point to your markdown directory in app.php.');
         }
 
-        $this->dirJail = new DirJail($this->config['dir']);
+        $this->dirJail = new DirJail($this->config['markdown_dir']);
         $this->router = $this->buildUrlMatcher();
         $this->template = $this->buildTemplateEngine();
         $this->markdown = $this->buildParsedown();
@@ -154,7 +154,19 @@ class Application
      */
     private function renderFile(string $filename): string
     {
-        return $this->markdown->text(file_get_contents($filename));
+        foreach ($this->config['markdown_extensions'] as $ext) {
+            if (mb_substr($filename, 0 - mb_strlen($ext) - 1) === '.' . $ext) {
+                return $this->markdown->text(file_get_contents($filename));
+            }
+        }
+
+        foreach ($this->config['extra_extensions'] as $ext) {
+            if (mb_substr($filename, 0 - mb_strlen($ext) - 1) === '.' . $ext) {
+                return '<pre><code>' . htmlspecialchars(file_get_contents($filename)) . '</code></pre>';
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -163,7 +175,7 @@ class Application
      */
     private function listDirectory(string $filename): array
     {
-        $ext = $this->config['ext'];
+        $exts = array_merge($this->config['markdown_extensions'], $this->config['extra_extensions']);
         $directories = $files = [];
 
         foreach (Finder::create()->in($filename)->depth(0)->directories() as $subdirectory) {
@@ -172,7 +184,11 @@ class Application
             $directories [basename($subdirectory)] = $link;
         }
 
-        foreach (Finder::create()->in($filename)->files()->depth(0)->name('*.' . $ext) as $file) {
+        $patterns = [];
+        foreach ($exts as $ext) {
+            $patterns [] = '*.' . $ext;
+        }
+        foreach (Finder::create()->in($filename)->files()->depth(0)->name($patterns) as $file) {
             $relativePath = $this->dirJail->resolveAbsolute($file, true);
             $link = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
             $files [basename($file)] = $link;
