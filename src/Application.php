@@ -72,7 +72,11 @@ class Application
             return $this->show404();
         }
 
-        return $instance->{$method}($request, $parameters);
+        try {
+            return $instance->{$method}($request, $parameters);
+        } catch (ResourceNotFoundException $e) {
+            return $this->show404();
+        }
     }
 
     /**
