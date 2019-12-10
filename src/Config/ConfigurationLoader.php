@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Monyxie\Mdir;
+namespace Monyxie\Mdir\Config;
 
 
 use Symfony\Component\Config\Loader\FileLoader;

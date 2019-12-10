@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Monyxie\Mdir;
+namespace Monyxie\Mdir\Filesystem;
 
 
-class DirJail
+class Jail
 {
     private $basePath;
 

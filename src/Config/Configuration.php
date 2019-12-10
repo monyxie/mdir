@@ -1,6 +1,6 @@
 <?php
 
-namespace Monyxie\Mdir;
+namespace Monyxie\Mdir\Config;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
