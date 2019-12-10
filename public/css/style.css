@@ -63,20 +63,18 @@ h3 {
 }
 .nav-item a {
     background: transparent;
-    border: 2px solid rgb(176, 202, 219);
     color: #fff;
     margin-top: 1em;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     font-size: 85%;
-    padding: 0.1em;
-    border-radius: 0.2em;
+    padding: 0.2em;
 }
-.nav-item a:hover,
-.nav-item a:focus {
-    border: 2px solid rgb(61, 146, 201);
-    text-decoration: none;
-}
+/*.nav-item a:hover,*/
+/*.nav-item a:focus {*/
+/*    border: 2px solid rgb(61, 146, 201);*/
+/*    text-decoration: none;*/
+/*}*/
 
 .content-subhead {
     text-transform: uppercase;

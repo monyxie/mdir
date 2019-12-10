@@ -4,6 +4,7 @@
 namespace Monyxie\Mdir\Http;
 
 
+use Colors\RandomColor;
 use Monyxie\Mdir\Filesystem\Jail;
 use Monyxie\Mdir\Filesystem\Lister;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -86,6 +87,18 @@ class Controller
         }
 
         list($files, $directories) = $this->lister->listDirectory($dir);
+        $directories = array_map(function ($path) {
+            return [
+                'color' => '#666',
+                'path' => $path,
+            ];
+        }, $directories);
+        $files = array_map(function ($path) {
+            return [
+                'color' => $this->getColor($path),
+                'path' => $path,
+            ];
+        }, $files);
         $ups = $this->lister->listUps($dir);
         $params = [
             'title' => $this->config['app_name'],
@@ -127,5 +140,16 @@ class Controller
         }
 
         return '';
+    }
+
+    private function getColor($path)
+    {
+        $basename = basename($path);
+        $dot = strrpos($basename, '.');
+        $ext = $dot === false ? '' : strtolower(substr($basename, $dot));
+        return RandomColor::one(['luminosity' => 'dark', 'prng' => function ($a, $b) use ($ext) {
+            srand(crc32($ext) + 7);
+            return rand($a, $b);
+        }]);
     }
 }

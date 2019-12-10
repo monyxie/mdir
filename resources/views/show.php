@@ -20,6 +20,7 @@
                     <ul class="nav-list">
                         <?php foreach ($ups as $directory => $path) { ?>
                             <li class="nav-item"><a href="<?= $view->escape($path) ?>"><?= $view->escape($directory) ?></a></li>
+                            <li class="nav-item">/</li>
                         <?php } ?>
                     </ul>
                 <?php } ?>
@@ -28,7 +29,7 @@
                     <p>Subdirectories:</p>
                     <ul class="nav-list">
                         <?php foreach ($directories as $directory => $path) { ?>
-                            <li class="nav-item"><a href="<?= $view->escape($path) ?>"><?= $view->escape($directory) ?></a></li>
+                            <li class="nav-item"><a style="background-color: <?= $path['color'] ?>" href="<?= $view->escape($path['path']) ?>"><?= $view->escape($directory) ?></a></li>
                         <?php } ?>
                     </ul>
                 <?php } ?>
@@ -36,7 +37,7 @@
                     <p>Files:</p>
                     <ul class="nav-list">
                         <?php foreach ($files as $file => $path) { ?>
-                            <li class="nav-item"><a href="<?= $view->escape($path) ?>"><?= $view->escape($file) ?></a></li>
+                            <li class="nav-item"><a style="background-color: <?= $path['color'] ?>" href="<?= $view->escape($path['path']) ?>"><?= $view->escape($file) ?></a></li>
                         <?php } ?>
                     </ul>
                 <?php } ?>
