@@ -55,6 +55,23 @@ class Application
 
     public function handle(Request $request): Response
     {
+        return $this->handleRequest($request)->prepare($request);
+    }
+
+    /**
+     * @return Response
+     */
+    private function show404(): Response
+    {
+        return new Response($this->template->render('404.php'));
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    private function handleRequest(Request $request): Response
+    {
         try {
             $parameters = $this->router->matchRequest($request);
         } catch (ResourceNotFoundException $e) {
@@ -77,14 +94,6 @@ class Application
         } catch (ResourceNotFoundException $e) {
             return $this->show404();
         }
-    }
-
-    /**
-     * @return Response
-     */
-    private function show404(): Response
-    {
-        return new Response($this->template->render('404.php'));
     }
 
 }

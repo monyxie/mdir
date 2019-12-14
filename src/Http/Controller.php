@@ -7,6 +7,7 @@ namespace Monyxie\Mdir\Http;
 use Colors\RandomColor;
 use Monyxie\Mdir\Filesystem\Jail;
 use Monyxie\Mdir\Filesystem\Lister;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,6 +73,9 @@ class Controller
         }
 
         if (is_file($path)) {
+            if ($this->isBinaryFile($path)) {
+                return new BinaryFileResponse($path);
+            }
             $file = $path;
             $dir = dirname($file);
         } else {
@@ -127,16 +131,14 @@ class Controller
      */
     private function renderFile(string $filename): string
     {
-        foreach ($this->config['markdown_extensions'] as $ext) {
-            if (mb_substr($filename, 0 - mb_strlen($ext) - 1) === '.' . $ext) {
-                return $this->markdown->text(file_get_contents($filename));
-            }
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+
+        if (in_array($extension, $this->config['markdown_extensions'])) {
+            return $this->markdown->text(file_get_contents($filename));
         }
 
-        foreach ($this->config['extra_extensions'] as $ext) {
-            if (mb_substr($filename, 0 - mb_strlen($ext) - 1) === '.' . $ext) {
-                return '<pre><code>' . htmlspecialchars(file_get_contents($filename)) . '</code></pre>';
-            }
+        if (in_array($extension, $this->config['extra_extensions'])) {
+            return '<pre><code>' . htmlspecialchars(file_get_contents($filename)) . '</code></pre>';
         }
 
         return '';
@@ -151,5 +153,10 @@ class Controller
             srand(crc32($ext) + 7);
             return rand($a, $b);
         }]);
+    }
+
+    private function isBinaryFile(string $path)
+    {
+        return in_array(pathinfo($path, PATHINFO_EXTENSION), $this->config['binary_extensions']);
     }
 }
