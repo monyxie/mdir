@@ -8,7 +8,8 @@
         "symfony/config": "^5.0",
         "symfony/error-handler": "^5.0",
         "pimple/pimple": "^3.2",
-        "mistic100/randomcolor": "^1.0"
+        "mistic100/randomcolor": "^1.0",
+        "react/http": "^0.8.5"
     },
     "autoload": {
         "psr-4": {
