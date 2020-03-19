@@ -27,7 +27,16 @@ h3 {
     padding: 0;
 }
 
-.header {
+.side-header {
+    background-color: #2980B9;
+    text-align: center;
+    padding: .809em;
+    display: block;
+    color: #fcfcfc;
+    margin-bottom: .809em;
+}
+
+.side-content {
     text-align: center;
     top: auto;
     margin: 3em auto;
@@ -162,7 +171,7 @@ h3 {
         margin-left: 25%;
     }
 
-    .header {
+    .side-content {
         margin: 10% 2em 0;
         text-align: left;
     }
