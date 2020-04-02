@@ -1,55 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/lib/purecss/pure-min.css">
-    <link rel="stylesheet" href="/lib/purecss/grids-responsive-min.css">
     <link rel="stylesheet" href="/lib/github-markdown-css/github-markdown.min.css">
+    <link rel="stylesheet" href="/css/sidemenu.css">
     <link rel="stylesheet" href="/css/style.css">
-    <title><?= $view->escape($title) ?></title>
+    <title><?= ($title ? $view->escape($title) . ' - ' : '') . $app_name ?></title>
 </head>
 <body>
-<div id="layout" class="pure-g">
-    <div id="sidebar" class="sidebar pure-u-1 pure-u-md-1-4">
-        <div class="side-header">
-            <h1 class="brand-title"><?= $view->escape($title) ?></h1>
-            <nav class="nav">
-                    <ul class="nav-list">
-                        <li class="nav-item">&raquo;</li>
-                        <li class="nav-item"><a href="<?= $view->escape('/') ?>"><?= $view->escape('Home') ?></a></li>
-                        <?php if (!empty($ups)) { ?>
-                            <?php array_shift($ups); foreach ($ups as $directory => $path) { ?>
-                                <li class="nav-item">&raquo;</li>
-                                <li class="nav-item"><a href="<?= $view->escape($path) ?>"><?= $view->escape($directory) ?></a></li>
-                            <?php } ?>
-                        <?php } ?>
-                    </ul>
-            </nav>
-        </div>
-        <div class="side-content">
-            <nav class="nav">
-                <?php if (empty($directories) && empty($files)) { ?><p>This directory is empty.</p><?php } ?>
-                <?php if (!empty($directories)) { ?>
-                    <ul class="nav-list">
-                        <?php foreach ($directories as $directory => $path) { ?>
-                            <li class="nav-item"><a style="background-color: <?= $path['color'] ?>" href="<?= $view->escape($path['path']) ?>"><?= $view->escape($directory) ?></a></li>
-                        <?php } ?>
-                    </ul>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <div class="pure-menu">
+            <a class="pure-menu-heading branding" href="<?= $view->escape('/') ?>"><?= $view->escape($app_name) ?></a>
+            <?php if (!empty($ups)) { ?>
+                <?php array_shift($ups);
+                foreach ($ups as $up) { ?>
+                    <a class="pure-menu-heading breadcrumb"
+                       href="<?= $view->escape($up['link']) ?>">&raquo; <?= $view->escape($up['base_name']) ?></a>
                 <?php } ?>
+            <?php } ?>
+
+            <ul class="pure-menu-list">
+
                 <?php if (!empty($files)) { ?>
-                    <ul class="nav-list">
-                        <?php foreach ($files as $file => $path) { ?>
-                            <li class="nav-item"><a style="background-color: <?= $path['color'] ?>" href="<?= $view->escape($path['path']) ?>"><?= $view->escape($file) ?></a></li>
-                        <?php } ?>
-                    </ul>
+                    <?php foreach ($files as $file) { ?>
+                        <li class="pure-menu-item <?= $file['is_current'] ? 'pure-menu-selected' : '' ?> ">
+                            <a class="pure-menu-link file-link"
+                               href="<?= $view->escape($file['link']) ?>"><?= $view->escape($file['base_name']) ?></a>
+                        </li>
+                    <?php } ?>
                 <?php } ?>
-            </nav>
+
+                <?php if (!empty($directories)) { ?>
+                    <?php foreach ($directories as $directory) { ?>
+                        <li class="pure-menu-item">
+                            <a class="pure-menu-link directory-link" href="<?= $view->escape($directory['link']) ?>">
+                                [<?= $view->escape($directory['base_name']) ?>]
+                            </a>
+                        </li>
+                    <?php } ?>
+                <?php } ?>
+            </ul>
         </div>
     </div>
-    <div id="content" class="markdown-body content pure-u-1 pure-u-md-3-4">
-        <?= $content ?>
+
+    <div id="main">
+        <?php if ($title ?? false) { ?>
+            <div class="header">
+                <h1><?= $title ?></h1>
+                <?php if ($subtitle ?? false) { ?><h2><?= $subtitle ?></h2><?php } ?>
+            </div>
+        <?php } ?>
+
+        <div id="content" class="markdown-body content">
+            <?= $content ?>
+        </div>
     </div>
 </div>
+
+<script src="/js/ui.js"></script>
+
 </body>
 </html>

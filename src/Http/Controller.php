@@ -7,6 +7,7 @@ namespace Monyxie\Mdir\Http;
 use Colors\RandomColor;
 use Monyxie\Mdir\Filesystem\Jail;
 use Monyxie\Mdir\Filesystem\Lister;
+use Monyxie\Mdir\Markdown\Parsedown;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +31,7 @@ class Controller
      */
     private $template;
     /**
-     * @var \Parsedown
+     * @var Parsedown
      */
     private $markdown;
 
@@ -91,24 +92,27 @@ class Controller
         }
 
         list($files, $directories) = $this->lister->listDirectory($dir);
-        $directories = array_map(function ($path) {
-            return [
-                'color' => '#666',
-                'path' => $path,
-            ];
-        }, $directories);
-        $files = array_map(function ($path) {
-            return [
-                'color' => $this->getColor($path),
-                'path' => $path,
-            ];
+        $files = array_map(function ($path) use ($file) {
+            return array_merge($path, [
+                'is_current' => $path['absolute_path'] === $file
+            ]);
         }, $files);
+
         $ups = $this->lister->listUps($dir);
+
+        if (is_file($file)) {
+            list($content, $title, $subtitle) = $this->renderFile($file);
+        } else {
+            $content = $title = $subtitle = '';
+        }
+
         $params = [
-            'title' => $this->config['app_name'],
+            'app_name' => $this->config['app_name'],
             'files' => $files,
             'directories' => $directories,
-            'content' => is_file($file) ? $this->renderFile($file) : '',
+            'content' => $content,
+            'title' => $title,
+            'subtitle' => $subtitle,
             'ups' => $ups,
         ];
 
@@ -127,21 +131,21 @@ class Controller
 
     /**
      * @param string $filename
-     * @return string
+     * @return array
      */
-    private function renderFile(string $filename): string
+    private function renderFile(string $filename): array
     {
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
 
         if (in_array($extension, $this->config['markdown_extensions'])) {
-            return $this->markdown->text(file_get_contents($filename));
+            return $this->markdown->myParse(file_get_contents($filename));
         }
 
         if (in_array($extension, $this->config['extra_extensions'])) {
-            return '<pre><code>' . htmlspecialchars(file_get_contents($filename)) . '</code></pre>';
+            $markup = '<pre><code>' . htmlspecialchars(file_get_contents($filename)) . '</code></pre>';
         }
 
-        return '';
+        return [$markup ?? '', '', '',];
     }
 
     private function getColor($path)

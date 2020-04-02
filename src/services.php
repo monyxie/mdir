@@ -4,6 +4,7 @@ use Monyxie\Mdir\Config\ConfigurationLoader;
 use Monyxie\Mdir\Filesystem\Jail;
 use Monyxie\Mdir\Filesystem\Lister;
 use Monyxie\Mdir\Http\Controller;
+use Monyxie\Mdir\Markdown\Parsedown;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;

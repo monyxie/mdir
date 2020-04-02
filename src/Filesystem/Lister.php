@@ -37,20 +37,34 @@ class Lister
         $exts = array_merge($this->markdownExtensions, $this->extraExtensions);
         $directories = $files = [];
 
-        foreach (Finder::create()->in($filename)->depth(0)->directories() as $subdirectory) {
+        foreach (Finder::create()->in($filename)->depth(0)->sortByName(true)->directories() as $subdirectory) {
+            /** @var \SplFileInfo $subdirectory */
             $relativePath = $this->jail->resolveAbsolute($subdirectory, true);
-            $link = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
-            $directories [basename($subdirectory)] = $link;
+            $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
+
+            $directories [] = [
+                'base_name' => basename($subdirectory),
+                'absolute_path' => $subdirectory->getPathname(),
+                'relative_path' => $relativePath,
+                'link' => '/' . $relativePath
+            ];
         }
 
         $patterns = [];
         foreach ($exts as $ext) {
             $patterns [] = '*.' . $ext;
         }
-        foreach (Finder::create()->in($filename)->files()->depth(0)->name($patterns) as $file) {
+        foreach (Finder::create()->in($filename)->files()->depth(0)->sortByName(true)->name($patterns) as $file) {
+            /** @var \SplFileInfo $file */
             $relativePath = $this->jail->resolveAbsolute($file, true);
-            $link = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
-            $files [basename($file)] = $link;
+            $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
+
+            $files [] = [
+                'base_name' => basename($file),
+                'absolute_path' => $file->getPathname(),
+                'relative_path' => $relativePath,
+                'link' => '/' . $relativePath
+            ];
         }
         return array($files, $directories);
     }
@@ -62,11 +76,13 @@ class Lister
             $relativePath = $this->jail->resolveAbsolute($up, true);
             $link = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
 
-            if ($relativePath !== '') {
-                $ups[basename($up)] = $link;
-            } else {
-                $ups['home'] = $link;
-            }
+            $ups[] = [
+                'base_name' => basename($up),
+                'absolute_path' => $up,
+                'relative_path' => $relativePath,
+                'link' => $link
+            ];
+
             $dir = $up;
         }
         return array_reverse($ups, true);
