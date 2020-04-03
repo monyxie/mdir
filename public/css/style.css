@@ -21,3 +21,12 @@ a.branding .home-icon {
 a.branding:hover .home-icon {
     display: inline;
 }
+
+@media print {
+    #menu {
+        display: none;
+    }
+    #layout {
+        padding-left: 0;
+    }
+}
