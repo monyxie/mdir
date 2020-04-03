@@ -10,3 +10,14 @@
     font-size: 80%;
     color: #eee;
 }
+
+a.branding .home-icon {
+    display: none;
+    font-size: 80%;
+    float: right;
+    margin-right: 0.6em;
+}
+
+a.branding:hover .home-icon {
+    display: inline;
+}

@@ -20,7 +20,7 @@
 
     <div id="menu">
         <div class="pure-menu">
-            <a class="pure-menu-heading branding" href="<?= $view->escape('/') ?>"><?= $view->escape($app_name) ?></a>
+            <a class="pure-menu-heading branding" href="<?= $view->escape('/') ?>"><?= $view->escape($app_name) ?><span class="home-icon">🏠</span></a>
             <?php if (!empty($ups)) { ?>
                 <?php array_shift($ups);
                 foreach ($ups as $up) { ?>
