@@ -108,6 +108,7 @@ class Controller
 
         $params = [
             'app_name' => $this->config['app_name'],
+            'code_highlight_style' => $this->config['code_highlight_style'],
             'files' => $files,
             'directories' => $directories,
             'content' => $content,

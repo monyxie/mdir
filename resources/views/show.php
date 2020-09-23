@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/lib/purecss/pure-min.css">
     <link rel="stylesheet" href="/lib/github-markdown-css/github-markdown.min.css">
+    <link rel="stylesheet" href="/lib/highlight.js/styles/<?= $code_highlight_style ?>.css">
     <link rel="stylesheet" href="/css/sidemenu.css">
     <link rel="stylesheet" href="/css/style.css">
     <title><?= ($title ? $view->escape($title) . ' - ' : '') . $app_name ?></title>
@@ -68,6 +69,8 @@
 </div>
 
 <script src="/js/ui.js"></script>
+<script src="/lib/highlight.js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 </body>
 </html>
