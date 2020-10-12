@@ -11,16 +11,16 @@ class ParsedownTest extends TestCase
     {
         $parsedown = new Parsedown();
 
-        list($content, $title, $subtitle) = $parsedown->myParse("title\n===\ncontent\n");
-        $this->assertEquals('title', $title);
-        $this->assertEquals('', $subtitle);
+        $parseResult = $parsedown->parse("title\n===\ncontent\n");
+        $this->assertEquals('title', $parseResult->title);
+        $this->assertEquals('', $parseResult->subtitle);
 
-        list($content, $title, $subtitle) = $parsedown->myParse("title\n===\nsubtitle\n---\ncontent\n");
-        $this->assertEquals('title', $title);
-        $this->assertEquals('subtitle', $subtitle);
+        $parseResult = $parsedown->parse("title\n===\nsubtitle\n---\ncontent\n");
+        $this->assertEquals('title', $parseResult->title);
+        $this->assertEquals('subtitle', $parseResult->subtitle);
 
-        list($content, $title, $subtitle) = $parsedown->myParse("thisisnotsubtitle\n---\ncontent\n");
-        $this->assertEquals('', $title);
-        $this->assertEquals('', $subtitle);
+        $parseResult = $parsedown->parse("thisisnotsubtitle\n---\ncontent\n");
+        $this->assertEquals('', $parseResult->title);
+        $this->assertEquals('', $parseResult->subtitle);
     }
 }

@@ -7,7 +7,7 @@ namespace Monyxie\Mdir\Http;
 use Colors\RandomColor;
 use Monyxie\Mdir\Filesystem\Jail;
 use Monyxie\Mdir\Filesystem\Lister;
-use Monyxie\Mdir\Markdown\Parsedown;
+use Monyxie\Mdir\Markdown\ParserInterface as MarkdownParser;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +31,7 @@ class Controller
      */
     private $template;
     /**
-     * @var Parsedown
+     * @var MarkdownParser
      */
     private $markdown;
 
@@ -40,10 +40,10 @@ class Controller
      * @param Lister $lister
      * @param Jail $jail
      * @param EngineInterface $template
-     * @param \Parsedown $markdown
+     * @param MarkdownParser $markdown
      * @param $config
      */
-    public function __construct(Lister $lister, Jail $jail, EngineInterface $template, \Parsedown $markdown, $config)
+    public function __construct(Lister $lister, Jail $jail, EngineInterface $template, MarkdownParser $markdown, $config)
     {
         $this->lister = $lister;
         $this->jail = $jail;
@@ -141,7 +141,8 @@ class Controller
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
 
         if (in_array($extension, $this->config['markdown_extensions'])) {
-            return $this->markdown->myParse(file_get_contents($filename));
+            $parseResult = $this->markdown->parse(file_get_contents($filename));
+            return [$parseResult->markup, $parseResult->title, $parseResult->subtitle];
         }
 
         if (in_array($extension, $this->config['extra_extensions'])) {
