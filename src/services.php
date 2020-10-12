@@ -40,7 +40,11 @@ return [
         return new Parsedown();
     },
     'lister' => function ($c) {
-        return new Lister($c['jail'], $c['config']['markdown_extensions'], $c['config']['extra_extensions']);
+        return new Lister(
+            $c['jail'],
+            array_merge($c['config']['markdown_extensions'], $c['config']['extra_extensions']),
+            $c['config']['excluded_dirs']
+        );
     },
     'controller' => function ($c) {
         return new Controller(

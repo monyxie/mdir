@@ -12,20 +12,26 @@ class Lister
      * @var Jail
      */
     private $jail;
-    private $markdownExtensions;
-    private $extraExtensions;
+    /**
+     * @var array
+     */
+    private $extensions;
+    /**
+     * @var array
+     */
+    private $excludedDirs;
 
     /**
      * Lister constructor.
      * @param Jail $jail
-     * @param $markdownExtensions
-     * @param $extraExtensions
+     * @param array $extensions
+     * @param array $excludedDirs
      */
-    public function __construct(Jail $jail, $markdownExtensions, $extraExtensions)
+    public function __construct(Jail $jail, array $extensions, array $excludedDirs)
     {
         $this->jail = $jail;
-        $this->markdownExtensions = $markdownExtensions;
-        $this->extraExtensions = $extraExtensions;
+        $this->extensions = $extensions;
+        $this->excludedDirs = $excludedDirs;
     }
 
     /**
@@ -34,10 +40,15 @@ class Lister
      */
     public function listDirectory(string $filename): array
     {
-        $exts = array_merge($this->markdownExtensions, $this->extraExtensions);
         $directories = $files = [];
 
-        foreach (Finder::create()->in($filename)->depth(0)->sortByName(true)->directories() as $subdirectory) {
+        $finder = Finder::create()
+            ->in($filename)
+            ->depth(0)
+            ->sortByName(true)
+            ->exclude($this->excludedDirs)
+            ->directories();
+        foreach ($finder as $subdirectory) {
             /** @var \SplFileInfo $subdirectory */
             $relativePath = $this->jail->resolveAbsolute($subdirectory, true);
             $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
@@ -51,7 +62,7 @@ class Lister
         }
 
         $patterns = [];
-        foreach ($exts as $ext) {
+        foreach ($this->extensions as $ext) {
             $patterns [] = '*.' . $ext;
         }
         foreach (Finder::create()->in($filename)->files()->depth(0)->sortByName(true)->name($patterns) as $file) {

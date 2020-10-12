@@ -79,7 +79,7 @@ class Controller
             }
             $file = $path;
             $dir = dirname($file);
-        } else {
+        } else if (!$this->isDirExcluded($path)) {
             $file = $path . '/index.md';
             $dir = $path;
 
@@ -89,6 +89,8 @@ class Controller
 
                 return RedirectResponse::create($link);
             }
+        } else {
+            throw new ResourceNotFoundException();
         }
 
         list($files, $directories) = $this->lister->listDirectory($dir);
@@ -163,5 +165,10 @@ class Controller
     private function isBinaryFile(string $path)
     {
         return in_array(pathinfo($path, PATHINFO_EXTENSION), $this->config['binary_extensions']);
+    }
+
+    private function isDirExcluded(string $path)
+    {
+        return in_array(basename($path), $this->config['excluded_dirs']);
     }
 }
