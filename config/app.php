@@ -9,4 +9,5 @@ return [
     'excluded_dirs' => ['_v_recycle_bin', '_v_images'],
     'binary_extensions' => ['bmp', 'jpg', 'jpeg', 'png', 'gif'],
     'code_highlight_style' => 'github',
+    'markdown_parser' => 'parsedown',
 ];

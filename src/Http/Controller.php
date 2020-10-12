@@ -103,9 +103,9 @@ class Controller
         $ups = $this->lister->listUps($dir);
 
         if (is_file($file)) {
-            list($content, $title, $subtitle) = $this->renderFile($file);
+            list($content, $title) = $this->renderFile($file);
         } else {
-            $content = $title = $subtitle = '';
+            $content = $title = '';
         }
 
         $params = [
@@ -115,7 +115,6 @@ class Controller
             'directories' => $directories,
             'content' => $content,
             'title' => $title,
-            'subtitle' => $subtitle,
             'ups' => $ups,
         ];
 
@@ -142,14 +141,14 @@ class Controller
 
         if (in_array($extension, $this->config['markdown_extensions'])) {
             $parseResult = $this->markdown->parse(file_get_contents($filename));
-            return [$parseResult->markup, $parseResult->title, $parseResult->subtitle];
+            return [$parseResult->markup, $parseResult->title];
         }
 
         if (in_array($extension, $this->config['extra_extensions'])) {
             $markup = '<pre><code>' . htmlspecialchars(file_get_contents($filename)) . '</code></pre>';
         }
 
-        return [$markup ?? '', '', '',];
+        return [$markup ?? '', ''];
     }
 
     private function getColor($path)

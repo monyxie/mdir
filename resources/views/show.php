@@ -55,13 +55,6 @@
     </div>
 
     <div id="main">
-        <?php if ($title ?? false) { ?>
-            <div class="header">
-                <h1><?= $title ?></h1>
-                <?php if ($subtitle ?? false) { ?><h2><?= $subtitle ?></h2><?php } ?>
-            </div>
-        <?php } ?>
-
         <div id="content" class="markdown-body content">
             <?= $content ?>
         </div>

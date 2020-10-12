@@ -14,15 +14,10 @@ class ParseResult
      * @var string
      */
     public $title;
-    /**
-     * @var string
-     */
-    public $subtitle;
 
-    public function __construct(string $markup, string $title, string $subtitle)
+    public function __construct(string $markup, string $title)
     {
         $this->markup = $markup;
         $this->title = $title;
-        $this->subtitle = $subtitle;
     }
 }

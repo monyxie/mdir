@@ -29,12 +29,12 @@ class Parsedown implements ParserInterface
                 $lines = explode("\n", $text);
 
                 # iterate through lines to identify blocks
-                list($markup, $title, $subtitle) = $this->myLines($lines);
+                list($markup, $title) = $this->myLines($lines);
 
                 # trim line breaks
                 $markup = trim($markup, "\n");
 
-                return new ParseResult($markup, $title, $subtitle);
+                return new ParseResult($markup, $title);
             }
 
             protected function myLines(array $lines)
@@ -159,18 +159,11 @@ class Parsedown implements ParserInterface
 
                 # ~
 
-                $markup = $title = $subtitle = '';
+                $markup = $title = '';
 
                 $titleBlock = reset($Blocks);
-                if ($titleBlock && ($titleBlock['type'] ?? null) === 'SetextHeader' && ($titleBlock['element']['name'] ?? null) === 'h1') {
+                if ($titleBlock && in_array(($titleBlock['type'] ?? null), ['SetextHeader', 'Header']) && ($titleBlock['element']['name'] ?? null) === 'h1') {
                     $title = $titleBlock['element']['text'];
-                    array_shift($Blocks);
-
-                    $subtitleBlock = reset($Blocks);
-                    if ($subtitleBlock && ($subtitleBlock['type'] ?? null) === 'SetextHeader' && ($subtitleBlock['element']['name'] ?? null) === 'h2') {
-                        $subtitle = $subtitleBlock['element']['text'];
-                        array_shift($Blocks);
-                    }
                 }
 
                 foreach ($Blocks as $Block) {
@@ -186,7 +179,7 @@ class Parsedown implements ParserInterface
 
                 # ~
 
-                return [$markup, $title, $subtitle];
+                return [$markup, $title];
             }
         };
     }

@@ -2,7 +2,9 @@
 
 namespace Monyxie\Mdir;
 
+use Monyxie\Mdir\Config\ConfigurationLoader;
 use Pimple\Container;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\ErrorHandler\ErrorHandler;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,18 +34,17 @@ class Application
 
     public function __construct()
     {
-        ErrorHandler::register();
-
-        $services = require __DIR__ . '/services.php';
-        $this->container = new Container($services);
-
-        $this->config = $this->container['config'];
+        $this->config = $this->loadConfiguration();
 
         if ($this->config['debug']) {
             Debug::enable();
         } else {
+            ErrorHandler::register();
             ini_set('display_errors', 'off');
         }
+
+        $this->container = new Container($this->loadServices());
+        $this->container['config'] = $this->config;
 
         if (!is_dir($this->config['markdown_dir'])) {
             die('Change "markdown_dir" to point to your markdown directory in app.php.');
@@ -96,4 +97,20 @@ class Application
         }
     }
 
+    public function loadConfiguration()
+    {
+        $configDirectories = [__DIR__ . '/../config'];
+        $fileLocator = new FileLocator($configDirectories);
+        $filepath = $fileLocator->locate('app.php', null, true);
+        $loader = new ConfigurationLoader($fileLocator);
+        return $loader->load($filepath);
+    }
+
+    /**
+     * @return mixed
+     */
+    private function loadServices()
+    {
+        return require __DIR__ . '/services.php';
+    }
 }

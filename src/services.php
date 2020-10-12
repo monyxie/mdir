@@ -1,11 +1,10 @@
 <?php
 
-use Monyxie\Mdir\Config\ConfigurationLoader;
 use Monyxie\Mdir\Filesystem\Jail;
 use Monyxie\Mdir\Filesystem\Lister;
 use Monyxie\Mdir\Http\Controller;
+use Monyxie\Mdir\Markdown\Commonmark;
 use Monyxie\Mdir\Markdown\Parsedown;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
@@ -15,18 +14,10 @@ use Symfony\Component\Templating\PhpEngine;
 use Symfony\Component\Templating\TemplateNameParser;
 
 return [
-    'config' => function () {
-        $configDirectories = [__DIR__ . '/../config'];
-        $fileLocator = new FileLocator($configDirectories);
-        $filepath = $fileLocator->locate('app.php', null, true);
-        $loader = new ConfigurationLoader($fileLocator);
-        $config = $loader->load($filepath);
-        return $config;
-    },
     'jail' => function () {
         return new Jail($this->config['markdown_dir']);
     },
-    'router' => function ($c) {
+    'router' => function () {
         $routes = new RouteCollection();
         $routes->add('index', new Route('/', ['_controller' => ['controller', 'show']]));
         $routes->add('show', new Route('/{path}', ['_controller' => ['controller', 'show']], ['path' => '.+']));
@@ -37,7 +28,14 @@ return [
         return new PhpEngine(new TemplateNameParser(), $filesystemLoader);
     },
     'markdown' => function () {
-        return new Parsedown();
+        switch ($this->config['markdown_parser'] ?? null) {
+            case 'commonmark':
+                return new Commonmark();
+            case 'parsedown':
+                return new Parsedown();
+            default:
+                throw new \Exception('Invalid config "markdown_parser": ' . $this->config['markdown_parser']);
+        }
     },
     'lister' => function ($c) {
         return new Lister(
