@@ -137,18 +137,18 @@ class Controller
      */
     private function renderFile(string $filename): array
     {
-        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        ['extension' => $extension, 'basename' => $basename] = pathinfo($filename);
 
         if (in_array($extension, $this->config['markdown_extensions'])) {
             $parseResult = $this->markdown->parse(file_get_contents($filename));
-            return [$parseResult->markup, $parseResult->title];
+            return [$parseResult->markup, $parseResult->title ?: $basename];
         }
 
         if (in_array($extension, $this->config['extra_extensions'])) {
             $markup = '<pre><code>' . htmlspecialchars(file_get_contents($filename)) . '</code></pre>';
         }
 
-        return [$markup ?? '', ''];
+        return [$markup ?? '', $basename];
     }
 
     private function getColor($path)
