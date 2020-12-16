@@ -4,7 +4,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 function show_usage()
 {
-    echo "Usage: php react-server.php [port]\n";
+    echo "Usage: php react-server.php [address:port]\n";
 }
 
 function parse_arguments($argv)
@@ -15,15 +15,16 @@ function parse_arguments($argv)
     }
 
     $args = [
-        'port' => 8080
+        'listen' => '127.0.0.1:8080'
     ];
 
     if (isset($argv[1])) {
-        if (!filter_var($argv[1], FILTER_VALIDATE_INT)) {
+        if (!preg_match('/^\d{1,3}(\.\d{1,3}){3}:\d{1,5}$/', $argv[1])) {
             show_usage();
             exit(-1);
         }
-        $args['port'] = $argv[1];
+
+        $args['listen'] = $argv[1];
     }
 
     return $args;
@@ -77,6 +78,6 @@ function initialize_server(): React\Http\Server
 $server = initialize_server();
 $loop = React\EventLoop\Factory::create();
 $args = parse_arguments($argv);
-initialize_server()->listen(new React\Socket\Server($args['port'], $loop));
-echo "Server listening on port {$args['port']}...\n";
+initialize_server()->listen(new React\Socket\Server($args['listen'], $loop));
+echo "Server listening on port {$args['listen']}...\n";
 $loop->run();
