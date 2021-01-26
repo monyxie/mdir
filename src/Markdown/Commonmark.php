@@ -8,6 +8,9 @@ use League\CommonMark\Block\Element\Heading;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
 use League\CommonMark\Event\DocumentParsedEvent;
+use League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension;
+use League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkRenderer;
+use League\CommonMark\Normalizer\SlugNormalizer;
 
 class Commonmark implements ParserInterface
 {
@@ -15,6 +18,7 @@ class Commonmark implements ParserInterface
     {
         $title = '';
         $environment = Environment::createGFMEnvironment();
+        $environment->addExtension(new HeadingPermalinkExtension());
         $environment->addEventListener(DocumentParsedEvent::class, function (DocumentParsedEvent $event) use (&$title) {
             if (($firstChild = $event->getDocument()->firstChild())
                 && $firstChild instanceof Heading
@@ -22,7 +26,17 @@ class Commonmark implements ParserInterface
                 $title = $firstChild->getStringContent();
             }
         });
-        $converter = new CommonMarkConverter([], $environment);
+        $config = [
+            'heading_permalink' => [
+                'html_class' => 'heading-permalink',
+                'id_prefix' => 'user-content',
+                'insert' => 'before',
+                'title' => 'Permalink',
+                'symbol' => HeadingPermalinkRenderer::DEFAULT_SYMBOL,
+                'slug_normalizer' => new SlugNormalizer(),
+            ],
+        ];
+        $converter = new CommonMarkConverter($config, $environment);
         $markup = $converter->convertToHtml($text);
 
         return new ParseResult($markup, $title);
