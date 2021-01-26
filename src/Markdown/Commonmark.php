@@ -4,6 +4,7 @@
 namespace Monyxie\Mdir\Markdown;
 
 
+use League\CommonMark\Block\Element\FencedCode;
 use League\CommonMark\Block\Element\Heading;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
@@ -19,13 +20,17 @@ class Commonmark implements ParserInterface
         $title = '';
         $environment = Environment::createGFMEnvironment();
         $environment->addExtension(new HeadingPermalinkExtension());
-        $environment->addEventListener(DocumentParsedEvent::class, function (DocumentParsedEvent $event) use (&$title) {
-            if (($firstChild = $event->getDocument()->firstChild())
-                && $firstChild instanceof Heading
-                && $firstChild->getLevel() == 1) {
-                $title = $firstChild->getStringContent();
+        $environment->addBlockRenderer(FencedCode::class, new FencedCodeRenderer(), 50);
+        $environment->addEventListener(
+            DocumentParsedEvent::class,
+            function (DocumentParsedEvent $event) use (&$title) {
+                if (($firstChild = $event->getDocument()->firstChild())
+                    && $firstChild instanceof Heading
+                    && $firstChild->getLevel() == 1) {
+                    $title = $firstChild->getStringContent();
+                }
             }
-        });
+        );
         $config = [
             'heading_permalink' => [
                 'html_class' => 'heading-permalink',

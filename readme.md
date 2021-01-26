@@ -21,6 +21,8 @@ There are 3 ways you can run the server. In all cases you will need to have PHP 
     3. Optionally, you could make the above command into a service. One way to do this on Linux is with systemd.
 * With MDir's built-in web server. This is the simplest way of running the server. You just run `php react-server.php` and that's it.
 
+## Todo
+- [ ] Figure out how to make anchor links and Mermaid renders work better together
 
 ## Credits
 - [Parsedown](https://github.com/erusev/parsedown) - Markdown parser.

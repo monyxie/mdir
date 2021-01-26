@@ -1,3 +1,10 @@
+<?php
+/** @var $title */
+/** @var $view */
+/** @var $code_highlight_style */
+/** @var $app_name */
+/** @var $content */
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -63,6 +70,7 @@
 
 <script src="/js/ui.js"></script>
 <script src="/lib/highlight.js/highlight.pack.js"></script>
+<script src="/lib/mermaid/mermaid.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 </body>
