@@ -13,6 +13,8 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Templating\EngineInterface as TemplateEngine;
 
+setlocale(LC_ALL, 'C.UTF-8');
+
 class Application
 {
     /**
