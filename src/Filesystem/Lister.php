@@ -71,7 +71,7 @@ class Lister
             $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
 
             $files [] = [
-                'base_name' => basename($file),
+                'base_name' => basename($file->getPathname()),
                 'absolute_path' => $file->getPathname(),
                 'relative_path' => $relativePath,
                 'link' => '/' . $relativePath

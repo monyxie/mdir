@@ -4,6 +4,9 @@
 /** @var $code_highlight_style */
 /** @var $app_name */
 /** @var $content */
+/** @var $ups */
+/** @var $files */
+/** @var $directories */
 ?>
 <!doctype html>
 <html lang="en">
