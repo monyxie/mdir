@@ -76,7 +76,6 @@
     <div id="main">
         <div id="content" class="markdown-body content">
             <?= $viewModel->content ?>
-            <hr>
         </div>
     </div>
 </div>
