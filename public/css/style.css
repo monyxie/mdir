@@ -1,7 +1,6 @@
 body {
-    background-color: #F6F4E6;
     color: #4C3C3E;
-
+    background-image: url("../images/bg.png");
 }
 
 #content {
