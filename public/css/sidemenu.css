@@ -23,6 +23,7 @@ This is the parent `<div>` that contains the menu and the content area.
     left: 0;
     padding-left: 0;
 }
+
 #layout.active #menu {
     left: 200px;
     width: 200px;
@@ -31,6 +32,7 @@ This is the parent `<div>` that contains the menu and the content area.
 #layout.active .menu-link {
     left: 200px;
 }
+
 /*
 The content `<div>` is where all your content goes.
 */
@@ -46,11 +48,13 @@ The content `<div>` is where all your content goes.
     text-align: center;
     border-bottom: 1px solid #eee;
 }
+
 .header h1 {
     margin: 0.2em 0;
     font-size: 3em;
     font-weight: 300;
 }
+
 .header h2 {
     font-weight: 300;
     padding: 0;
@@ -78,6 +82,7 @@ appears on the left side of the page.
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
+
 /*
 All anchors inside the menu should be styled like this.
 */
@@ -100,6 +105,7 @@ Add that light border to separate items into groups.
 #menu .pure-menu ul,
 #menu .pure-menu .menu-item-divided {
 }
+
 /*
 Change color of the anchor links on hover/focus.
 */
@@ -110,10 +116,10 @@ Change color of the anchor links on hover/focus.
 /*
 This styles the selected menu item `<li>`.
 */
-#menu .pure-menu li:hover a
-{
+#menu .pure-menu li:hover a {
     text-decoration: underline;
 }
+
 /*
 This styles a link within a selected menu item `<li>`.
 */
@@ -182,6 +188,18 @@ small screens.
     margin-top: 0.6em;
 }
 
+footer {
+    font-size: 0.8em;
+    padding: 0 2em;
+    max-width: 800px;
+    margin: 0 auto 50px;
+    color: #93938B;
+}
+
+footer ul {
+    list-style: none;
+}
+
 
 /* -- Responsive Styles (Media Queries) ------------------------------------- */
 
@@ -200,6 +218,7 @@ Hides the menu at `48em`, but modify this based on your app's needs.
         padding-left: 200px; /* left col width "#menu" */
         left: 0;
     }
+
     #menu {
         left: 200px;
     }

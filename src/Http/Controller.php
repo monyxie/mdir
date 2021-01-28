@@ -4,10 +4,10 @@
 namespace Monyxie\Mdir\Http;
 
 
-use Colors\RandomColor;
 use Monyxie\Mdir\Filesystem\Jail;
 use Monyxie\Mdir\Filesystem\Lister;
 use Monyxie\Mdir\Markdown\ParserInterface as MarkdownParser;
+use Monyxie\Mdir\ViewModel\ShowViewModel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,8 +43,13 @@ class Controller
      * @param MarkdownParser $markdown
      * @param $config
      */
-    public function __construct(Lister $lister, Jail $jail, EngineInterface $template, MarkdownParser $markdown, $config)
-    {
+    public function __construct(
+        Lister $lister,
+        Jail $jail,
+        EngineInterface $template,
+        MarkdownParser $markdown,
+        $config
+    ) {
         $this->lister = $lister;
         $this->jail = $jail;
         $this->config = $config;
@@ -57,7 +62,7 @@ class Controller
      * @param array $params
      * @return Response
      */
-    public function show(Request $request, array $params)
+    public function show(Request $request, array $params): Response
     {
         return $this->showPath($params['path'] ?? '');
     }
@@ -79,26 +84,34 @@ class Controller
             }
             $file = $path;
             $dir = dirname($file);
-        } else if (!$this->isDirExcluded($path)) {
-            $file = $path . '/index.md';
-            $dir = $path;
-
-            if (is_file($file)) {
-                $relativePath = $this->jail->resolveAbsolute($file, true);
-                $link = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
-
-                return RedirectResponse::create($link);
-            }
         } else {
-            throw new ResourceNotFoundException();
+            if (!$this->isDirExcluded($path)) {
+                $file = $path . '/index.md';
+                $dir = $path;
+
+                if (is_file($file)) {
+                    $relativePath = $this->jail->resolveAbsolute($file, true);
+                    $link = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
+
+                    return RedirectResponse::create($link);
+                }
+            } else {
+                throw new ResourceNotFoundException();
+            }
         }
 
         list($files, $directories) = $this->lister->listDirectory($dir);
-        $files = array_map(function ($path) use ($file) {
-            return array_merge($path, [
-                'is_current' => $path['absolute_path'] === $file
-            ]);
-        }, $files);
+        $files = array_map(
+            function ($path) use ($file) {
+                return array_merge(
+                    $path,
+                    [
+                        'is_current' => $path['absolute_path'] === $file
+                    ]
+                );
+            },
+            $files
+        );
 
         $ups = $this->lister->listUps($dir);
 
@@ -108,17 +121,16 @@ class Controller
             $content = $title = '';
         }
 
-        $params = [
-            'app_name' => $this->config['app_name'],
-            'code_highlight_style' => $this->config['code_highlight_style'],
-            'files' => $files,
-            'directories' => $directories,
-            'content' => $content,
-            'title' => $title,
-            'ups' => $ups,
-        ];
+        $viewModel = new ShowViewModel();
+        $viewModel->app_name = $this->config['app_name'];
+        $viewModel->code_highlight_style = $this->config['code_highlight_style'];
+        $viewModel->title = $title;
+        $viewModel->files = $files;
+        $viewModel->directories = $directories;
+        $viewModel->content = $content;
+        $viewModel->ups = $ups;
 
-        return new Response($this->template->render('show.php', $params));
+        return new Response($this->template->render('show.php', ['viewModel' => $viewModel,]));
     }
 
     /**
@@ -129,7 +141,6 @@ class Controller
     {
         return $this->jail->resolveRelative($path);
     }
-
 
     /**
      * @param string $filename
@@ -149,17 +160,6 @@ class Controller
         }
 
         return [$markup ?? '', $basename];
-    }
-
-    private function getColor($path)
-    {
-        $basename = basename($path);
-        $dot = strrpos($basename, '.');
-        $ext = $dot === false ? '' : strtolower(substr($basename, $dot));
-        return RandomColor::one(['luminosity' => 'dark', 'prng' => function ($a, $b) use ($ext) {
-            srand(crc32($ext) + 7);
-            return rand($a, $b);
-        }]);
     }
 
     private function isBinaryFile(string $path)
