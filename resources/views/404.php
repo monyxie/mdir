@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/lib/purecss/pure-min.css">
     <link rel="stylesheet" href="/lib/purecss/grids-responsive-min.css">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
     <title>404 Not Found</title>
 </head>
 <body>

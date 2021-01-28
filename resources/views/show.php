@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="/lib/highlight.js/styles/<?= $code_highlight_style ?>.css">
     <link rel="stylesheet" href="/css/sidemenu.css">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
     <title><?= ($title ? $view->escape($title) . ' - ' : '') . $app_name ?></title>
 </head>
 <body>
