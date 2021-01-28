@@ -58,7 +58,12 @@ class Application
 
     public function handle(Request $request): Response
     {
-        return $this->handleRequest($request)->prepare($request);
+        try {
+            $response = $this->handleRequest($request);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e);
+        }
+        return $response->prepare($request);
     }
 
     /**
@@ -114,5 +119,30 @@ class Application
     private function loadServices()
     {
         return require __DIR__ . '/services.php';
+    }
+
+    /**
+     * @param \Throwable $e
+     */
+    private function handleException($e)
+    {
+        $str = sprintf(
+            "%s: %s\nat %s:%s\n[stacktrace]\n%s\n",
+            get_class($e),
+            $e->getMessage(),
+            $e->getFile(),
+            $e->getLine(),
+            $e->getTraceAsString()
+        );
+
+        fwrite(STDERR, $str);
+
+        if ($this->config['debug']) {
+            $content = '<pre>' . $str . '</pre>';
+        } else {
+            $content = "Internal server error";
+        }
+
+        return new Response($content, 500);
     }
 }
