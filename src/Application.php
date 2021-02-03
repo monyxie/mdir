@@ -135,7 +135,9 @@ class Application
             $e->getTraceAsString()
         );
 
-        fwrite(STDERR, $str);
+        if (defined('STDERR')) {
+            fwrite(STDERR, $str);
+        }
 
         if ($this->config['debug']) {
             $content = '<pre>' . $str . '</pre>';
