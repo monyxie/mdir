@@ -18,11 +18,9 @@
 <body>
 
 <div id="layout">
+    <?php if (!$viewModel->contentOnly) { ?>
     <!-- Menu toggle -->
-    <a href="#menu" id="menuLink" class="menu-link">
-        <!-- Hamburger icon -->
-        <span></span>
-    </a>
+        <a href="#menu" id="menuLink" class="menu-link"><img src="/images/hamburger.png" alt="menu icon"/></a>
 
     <div id="menu">
         <div class="pure-menu">
@@ -72,6 +70,7 @@
             </ul>
         </div>
     </div>
+    <?php } ?>
 
     <div id="main">
         <div id="content" class="markdown-body content">

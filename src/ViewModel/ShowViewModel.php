@@ -10,4 +10,5 @@ class ShowViewModel extends BaseViewModel
     public $directories;
     public $content;
     public $ups;
+    public $contentOnly;
 }

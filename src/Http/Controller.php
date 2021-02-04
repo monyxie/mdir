@@ -64,15 +64,18 @@ class Controller
      */
     public function show(Request $request, array $params): Response
     {
-        return $this->showPath($params['path'] ?? '');
+        return $this->showPath($request, $params['path'] ?? '');
     }
 
     /**
+     * @param Request $request
      * @param $path
      * @return Response
      */
-    private function showPath($path): Response
+    private function showPath(Request $request, $path): Response
     {
+        $contentOnly = (bool)$request->get('content_only', false);
+
         $path = $this->resolvePath($path ?? '');
         if (!$path) {
             throw new ResourceNotFoundException();
@@ -100,20 +103,24 @@ class Controller
             }
         }
 
-        list($files, $directories) = $this->lister->listDirectory($dir);
-        $files = array_map(
-            function ($path) use ($file) {
-                return array_merge(
-                    $path,
-                    [
-                        'is_current' => $path['absolute_path'] === $file
-                    ]
-                );
-            },
-            $files
-        );
+        if ($contentOnly) {
+            $files = $directories = $ups = [];
+        } else {
+            list($files, $directories) = $this->lister->listDirectory($dir);
+            $files = array_map(
+                function ($path) use ($file) {
+                    return array_merge(
+                        $path,
+                        [
+                            'is_current' => $path['absolute_path'] === $file
+                        ]
+                    );
+                },
+                $files
+            );
 
-        $ups = $this->lister->listUps($dir);
+            $ups = $this->lister->listUps($dir);
+        }
 
         if (is_file($file)) {
             list($content, $title) = $this->renderFile($file);
@@ -129,6 +136,7 @@ class Controller
         $viewModel->directories = $directories;
         $viewModel->content = $content;
         $viewModel->ups = $ups;
+        $viewModel->contentOnly = $contentOnly;
 
         return new Response($this->template->render('show.php', ['viewModel' => $viewModel,]));
     }
